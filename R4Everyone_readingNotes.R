@@ -267,3 +267,29 @@ amat %*% cmat
 #the only difference between arrays and matrices is that matrices are restricted to 2 dimensions
 theArray <- array( 1:12, dim = c( 2,3,2 ) )
 theArray
+
+#reading data into R
+#oh the joys of CSV files!
+#reading CSV using read.table or read.csv to create a new dataframe
+theURL <- 'http://www.jaredlander.com/data/TomatoFirst.csv'
+#specifying the arguments is good practice. Bonnie you should do moar of this
+#header = TRUE indicates that the first row is column names
+tomato <- read.table( file = theURL, header = TRUE, sep = ',' )
+tomato
+head( tomato )
+#stringAsFactors
+theDF <- data.frame( First = x, Second = y, Sport = q, stringsAsFactors = FALSE )
+theDF
+theDF$Sport
+#there are many useful read in fxns from various r packages:
+#read.table, read.csv, read.csv2, read.delim, read.delim2 etc.
+library( readr )
+tomato2 <- read_delim( file = theURL, delim = ',' )
+tomato2
+library( data.table )
+tomato3 <- fread( input = theURL, sep = ',', header = TRUE )
+head( tomato3 )
+
+#Excel Data
+download.file(url='http://www.jaredlander.com/data/ExcelExample.xlsx', destfile='data/ExcelExample.xlsx' )
+library( readxl )
