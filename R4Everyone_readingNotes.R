@@ -195,4 +195,75 @@ the_DataFrame[ , 'Sport', drop=FALSE ]
 class( the_DataFrame[ , 'Sport', drop=FALSE ] )
 newFactor <- factor( c( 'Pennsylvania', 'New York', 'New Jersey', 'New York', 'Tennessee', 'Massachusetts', 'Pennsylvania', 'New York' ) )
 model.matrix( ~ newFactor - 1 )
+#Lists:a container to hold mixed type data
+list( 1,2,3 )
+list( c( 1,2,3 ), c( 4,5,6 ), c( 7,8,9 ) )
+#enclosing the expression in parenthesis displays the results after execution
+( list3 <- list( c( 1,2,3 ), 3:7 ) ) 
+list3
+list( the_DataFrame, 1:10 )
+list5 <- list( the_DataFrame, 1:10, list3 )
+list5
+names( list5 )
+names( list5 ) <- c( 'data.frame', 'vector', 'list' )
+names( list5 )
+list5
+list6 <- list( TheDataFrame = the_DataFrame, TheVector = 1:10, TheList = list3 )
+list6
+#create an empty list with specific dimentions
+( emptyList <- vector( mode='list', length=4 ) )
+#need to use double square brackets to index lists
+list5[[ 1 ]]
+list5[[ 'data.frame' ]]
+#need to index the level before you can access the element
+list5[[ 1 ]]$Sport
+list6[[ 1 ]][, "Second"]
+list5[[ 1 ]][, 'Second', drop=FALSE ]
+#appending to a list
+length( list5 )
+list5[[ 4 ]] <- 2
+length( list5 )
+list5
+list5[[ 'NewElement' ]] <- 3:6
+length( list5 )
+list5
+names( list5 )
+#STYLE ALERT: appending to a list (say, in a for loop) is comutationally expensive.
+#So, it is best practice to create a list as long as its final desired size and then fill it in using the appropriate indices.
 
+#Matices: rectangular with rows and columns. Every single element, regardless of column, must be the same data type.
+amat <- matrix( 1:10, nrow=5 )
+amat
+bmat <- matrix( 21:30, nrow=5 )
+bmat
+cmat <- matrix( 21:40, nrow=2 )
+cmat
+nrow( amat )
+ncol( bmat )
+dim( cmat )
+amat + bmat
+dmat <- amat + bmat
+dmat
+dmat <- amat * bmat
+dmat
+#this is cool, you can get a boolmat back of matching elements
+amat == bmat
+emat <- amat %*% t( bmat )
+emat
+colnames( amat )
+rownames( amat )
+colnames( amat ) <- c( 'left', 'right' )
+rownames( amat ) <- c( '1st', '2nd', '3rd', '4th', '5th' )
+amat 
+colnames( bmat ) <- c( 'First', 'Second' )
+rownames( bmat ) <- c( 'one', 'two', 'three', 'four', 'five' )
+bmat
+colnames( cmat ) <- LETTERS[ 1:10 ]
+rownames( cmat ) <- c( 'Top', 'Bottom')
+cmat
+t( amat )
+amat %*% cmat
+#Arrays: essentially multidimentional vectors. behave samesame
+#the only difference between arrays and matrices is that matrices are restricted to 2 dimensions
+theArray <- array( 1:12, dim = c( 2,3,2 ) )
+theArray
