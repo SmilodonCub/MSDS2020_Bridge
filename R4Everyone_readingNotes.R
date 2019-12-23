@@ -291,5 +291,42 @@ tomato3 <- fread( input = theURL, sep = ',', header = TRUE )
 head( tomato3 )
 
 #Excel Data
-download.file(url='http://www.jaredlander.com/data/ExcelExample.xlsx', destfile='data/ExcelExample.xlsx' )
+#COULDN'T GET THIS TO WORK. NEED TO UNZIP XLSX. MOVING ON INSTEAD OF FINISHING....
 library( readxl )
+download.file(url='http://www.jaredlander.com/data/ExcelExample.xlsx', destfile='ExcelExample.xlsx', method = 'curl' )
+excel_sheets('ExcelExample.xlsx')
+tomatoXL <-read_excel('/home/bonzilla/Desktop/MSDS2020/MSDS2020_Bridge/RBridge_R4Everyone/ExcelExample.xlsx')
+
+#Reading from databases
+download.file("http://www.jaredlander.com/data/diamonds.db", destfile = "diamonds.db", mode='wb')
+library( RSQLite )
+drv <- dbDriver('SQLite') #specify the driver
+class( drv )
+con <- dbConnect( drv, 'diamonds.db' )#establishing the connection with the driver
+class( con )
+dbListTables( con ) #get the names of tables in the database
+dbListFields( con, name = 'diamonds' )
+dbListFields( con, name = 'DiamondColors' )
+diamondsTable <- dbGetQuery( con, "SELECT * FROM diamonds", stringsAsFactors=FALSE)
+head( diamondsTable )
+colorTable <- dbGetQuery( con, "SELECT * FROM DiamondColors", stringsAsFactors=FALSE)
+head( colorTable )
+longQuery <- "SELECT * FROM diamonds, DiamondColors WHERE diamonds.color = DiamondColors.Color"
+diamondsJoin <- dbGetQuery( con, longQuery, stringsAsFactors=FALSE )
+head( diamondsJoin )
+dbDisconnect( con, 'diamonds.db' )
+#data from other statistical tools
+#R Binary Files
+save( tomato, file="tomato.rdata" )
+rm( tomato )
+head( tomato )
+load( 'tomato.rdata' )
+head( tomato ) #the object is restored to the working environment with the same name as before
+#this is why we do not assign the result of load fxn to an object
+
+#Extracting data from websites
+library( XML ) #this library DID NOT COOPERATE!....DIDNT BOTHER TO TROUBLE SHOOT
+theURL <- "http://www.jaredlander.com/2012/02/another-kind-of-super-bowl-pool/"
+bowlPool <- readHTMLTable( theURL, which=1, header=FALSE, stringsAsFactors=FALSE )
+
+library( rvest )
