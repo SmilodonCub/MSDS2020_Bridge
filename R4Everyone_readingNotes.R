@@ -384,3 +384,101 @@ run.this <- function( x, func=mean )
 run.this( 1:10 )
 run.this( 1:20, mean )
 run.this( 1:40, sum )
+
+#Control Statements
+#if and else. the most basic checks are ==, <, <=, >, >=, and !=
+toCheck <- 1
+if(toCheck == 1)
+{
+  print('hello')
+}
+check.bool <- function(x)
+{
+  if(x == 1)
+  {
+    print('hello')
+  }
+  else if(x ==0)
+  {
+    print('goodbye')
+  }
+  else
+  {
+    print('confused')
+  }
+}
+check.bool(5)
+check.bool(FALSE)
+check.bool(1)
+#switch
+use.switch <- function(x)
+{
+ switch(x,
+        'a' = 'first',
+        'b' = 'second',
+        'c' = 'third',
+        'd' = 'fourth',
+        'e' = 'fifth',
+        'z' = 'last',
+        'other') 
+}
+use.switch('a')
+use.switch('z')
+use.switch(2)
+use.switch('p')
+#IFELSE
+ifelse(1 == 1, 'Yes','No')
+ifelse(1 == FALSE, 'Yes','No')
+toTest <- c( 1,1,0,1,0,1 )
+ifelse(toTest ==1, 'Yes', 'No')
+ifelse(toTest == 1, toTest*3, toTest)
+ifelse(toTest == 1, toTest*5, 'Zero')
+toTest[2] <- NA
+toTest
+ifelse(toTest == 1, 'Yes', 'No')
+ifelse(toTest == 1, toTest*7, 'Zero')
+#compound tests: & && | ||.
+#the double forms are best used in an if
+#the single forms are necessary for ifelse
+#the double form compares only one element from each side, while the single form compares each element of each side
+a <- c(1,1,0,1)
+b <- c(2,1,0,1)
+ifelse(a ==1 & b == 1, 'yes', 'no')
+ifelse(a == 1 && b == 1, 'yes', 'no')
+
+#LOOPS
+#for loops
+for(i in 1:10 ){print(i)}
+fruit <- c('apple', 'banana', 'pear')
+fruitlength <- rep(NA, length(fruit))
+fruitlength
+names(fruitlength) <- fruit
+fruitlength
+for(a in fruit){fruitlength[a] <- nchar(a)}
+fruitlength
+fruitlength2 <- nchar(fruit)
+fruitlength2
+names(fruitlength2) <- fruit
+fruitlength2
+identical(fruitlength, fruitlength2)
+#while
+x <- 1
+while(x <= 5){
+  print(x)
+  x <- x + 1
+  }
+for(i in 1:10){
+  if(i == 3)
+  {
+    next
+  }
+  print(i)
+}
+for(i in 1:10){
+  if(i == 4){
+    break
+  }
+  print(i)
+}
+  }
+}
