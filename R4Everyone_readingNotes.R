@@ -330,3 +330,57 @@ theURL <- "http://www.jaredlander.com/2012/02/another-kind-of-super-bowl-pool/"
 bowlPool <- readHTMLTable( theURL, which=1, header=FALSE, stringsAsFactors=FALSE )
 
 library( rvest )
+ribalta <- read_html('http://www.jaredlander.com/data/ribalta.html')
+class( ribalta )
+ribalta %>% html_nodes( 'ul' ) %>% html_nodes( 'span' )
+ribalta %>% html_nodes( '.street' )
+ribalta %>% html_nodes('.street') %>% html_text()
+ribalta %>% html_nodes('#longitude') %>% html_attr('value')
+ribalta %>% 
+  html_nodes('table.food-items') %>% 
+  migrittr::extract2( 5 ) %>% 
+  html_table()
+
+
+#Chapter 8 Functions
+say.hello <- function()
+{
+  print( "Hello, World!" )
+}
+say.hello()
+#sprintf
+sprintf( "Hello %s", "Jared")
+sprintf( "Hello %s, today is %s", "Jared", "Sunday")
+hello.person <- function( name )
+{
+  print( sprintf( "Hello %s", name ) )
+}
+hello.person( 'Jared' )
+hello.person( 'Bonnie' )
+
+hello.person <- function( first, last )
+{
+  print( sprintf( "Hello %s %s", first, last ) )
+}
+hello.person( "Bonnie", "Cooper" )
+hello.person( last = 'Blackburn', f = 'Zach' )
+
+hello.janedoe <- function( first = 'jane', second = 'doe' )
+{
+  print( sprintf( "Hello %s %s", first, second ) )
+}
+hello.janedoe( 'Bonnie' )
+
+hello.niceday <- function( first = 'Bonnie', last = 'Cooper', ... )
+{
+  print( sprintf( "Hello %s %s", first, last ) )
+}
+hello.niceday( first = 'Zach', last = 'Blackburn', extra = 'Have a nice day' )
+
+run.this <- function( x, func=mean )
+{
+  do.call( func, args=list( x ) )
+}
+run.this( 1:10 )
+run.this( 1:20, mean )
+run.this( 1:40, sum )
