@@ -480,3 +480,119 @@ for(i in 1:10){
   }
   print(i)
 }
+
+#GROUP MANIPULATIONS
+#apply
+theMatrix <- matrix(1:9, nrow=3)
+apply(theMatrix, 1, sum) #sum the rows
+apply(theMatrix, 2, sum) #sum the collumns
+rowSums(theMatrix)
+colSums(theMatrix)
+theMatrix[2,1] <- NA
+theMatrix
+apply(theMatrix, 1, sum)
+apply(theMatrix, 1, sum, na.rm=TRUE)
+rowSums(theMatrix)
+rowSums(theMatrix, na.rm=TRUE)
+#lapply works by applying a function to each element of a list and returning the results as a list
+theList <-list(A=matrix(1:9,3), B=1:5, C=matrix(1:4,2), D=2)
+lapply(theList, sum)
+theList
+#sapply: return the result of lapply as a vector
+sapply(theList,sum)
+theNames <- c('Jared','Deb','Paul')
+lapply(theNames, nchar)
+#mapply: work with multiple lists
+firstList <- list( A=matrix( 1:16,4), B=matrix(1:16,2), C=1:5)
+secondList <- list( A=matrix( 1:16,4), B=matrix(1:16,8), C=15:1)
+mapply(identical, firstList, secondList)
+simpleFunc <- function( x,y )
+  {
+  NROW(x) + NROW(y)
+  }
+mapply( simpleFunc, firstList, secondList)
+#aggregate
+data(diamonds, package='ggplot2')
+head(diamonds)
+aggregate( price ~ cut, diamonds, mean)
+aggregate( price ~ cut + color, diamonds, mean)
+aggregate( cbind( price, carat) ~ cut, diamonds, mean)
+aggregate( cbind( price, carat) ~ cut + color, diamonds, mean)
+#plyr: split-apply-combine
+#ddply
+library(plyr)
+head(baseball)
+baseball$sf[baseball$year < 1954] <- 0
+any(is.na(baseball$sf))
+baseball$hbp[is.na(baseball$hbp)] <- 0
+any(is.na(baseball$hbp))
+baseball$OBP <- with(baseball, (h + bb + hbp) / (ab + bb + hbp + sf ))
+tail(baseball)
+baseball <- baseball[baseball$ab >= 50, ]
+baseball$OBP <- with(baseball, (h + bb + hbp) / (ab + bb + hbp + sf ))
+tail(baseball)
+obp <-function( data ){
+  c( OBP= with( data, sum(h+bb+hbp)/sum(ab +bb+hbp+sf)))
+}
+careerOBP <- ddply( baseball, .variables='id', .fun=obp)
+careerOBP <- careerOBP[ order( careerOBP$OBP, decreasing = TRUE), ]
+head( careerOBP, 10 )
+#llply
+llply( theList, sum )
+identical( lapply( theList, sum ), llply( theList, sum ) )
+laply( theList, sum)
+identical( sapply(theList, sum), laply( theList, sum))
+#plyr helper function
+#each
+aggregate( price ~ cut, diamonds, each( mean, median ))
+#idata.frame
+system.time( dlply(baseball, 'id', nrow))
+iBaseball <- idata.frame(baseball)
+system.time( dlply( iBaseball, 'id', nrow))
+#data.table
+library(data.table)
+theDF <- data.frame( A=1:10,
+                     B=letters[1:10],
+                     C=LETTERS[11:20],
+                     D=rep(c('One','Two','Three'), length.out=10))
+theDF
+theDT <- data.table( A=1:10,
+                     B=letters[1:10],
+                     C=LETTERS[11:20],
+                     D=rep(c('One','Two','Three'), length.out=10))
+theDT
+class(theDF$B)
+class(theDT$B)
+diamondsDT <- data.table(diamonds)
+diamondsDT
+theDT[1:2, ]
+theDT[ theDT$A >= 7, ]
+theDT[, list(A,C)]
+theDT[, B]
+theDT[, list(B)]
+theDT[, 'B', with=FALSE]
+theDT[, c('A','C'), with=FALSE]
+theCols <- c("A","D")
+theDT[, theCols, with=FALSE]
+#Keys
+tables()
+setkey(theDT, D) #the data is sorted by column 'D"
+theDT
+key(theDT)
+tables()
+theDT['One',]
+theDT[c('One','Two'),]
+setkey(diamondsDT, cut, color)
+diamondsDT
+diamondsDT[J('Ideal','E'),]
+#data.table aggregation
+aggregate( price ~ cut, diamonds, mean)
+diamondsDT[, mean(price), by=cut]#for same result with data.tables
+diamondsDT[, list(price=mean(price)),by=cut]#specify column nmaes
+#aggregating multiple columns
+diamondsDT[, mean(price), by=list(cut,color)]
+#aggregating multiple arguments
+diamondsDT[, list(price=mean(price), carat=mean(carat)), by=cut]
+diamondsDT[, list(price=mean(price), carat=mean(carat), caratSum=sum(carat)), by=cut]
+#multiple metrics on multiple grouping variables
+diamondsDT[, list(price=mean(price), carat=mean(carat)), by = list(cut,color)]
