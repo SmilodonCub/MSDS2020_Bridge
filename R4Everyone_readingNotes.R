@@ -596,3 +596,139 @@ diamondsDT[, list(price=mean(price), carat=mean(carat)), by=cut]
 diamondsDT[, list(price=mean(price), carat=mean(carat), caratSum=sum(carat)), by=cut]
 #multiple metrics on multiple grouping variables
 diamondsDT[, list(price=mean(price), carat=mean(carat)), by = list(cut,color)]
+
+
+#dplyr chapter
+library( magrittr )
+data( diamonds, package='ggplot2' )
+dim( head( diamonds, n=4 ) )
+diamonds %>% head( 4 ) %>% dim
+#TBL
+class( diamonds )
+head( diamonds )
+library( dplyr )
+head( diamonds )
+diamonds
+#Since tbls are printed with only a subset of the rows, we do not need to use head.
+#select
+select( diamonds, carat, price )
+diamonds %>% select(carat, price )
+diamonds %>% select( c(carat, price ) )
+diamonds %>% select_('carat', 'price')
+theCols <- c('carat', 'price')
+diamonds %>% select_( .dots=theCols )
+diamonds %>% select( one_of ( 'carat', 'price') )
+theCols
+diamonds %>% select( one_of( theCols ) )
+diamonds[, c( 'carat', 'price' ) ]
+select( diamonds, 1, 7 )
+diamonds %>% select( 1,7 )
+#searching for a partial match: starts_with, ends_with & contains
+diamonds %>% select( starts_with( 'c' ) )
+diamonds %>% select( ends_with( 'e' ) )
+diamonds %>% select( contains( 'l' ) )
+#in R regex is done with matches
+diamonds %>% select( matches( 'r.+t') )
+#negate from selection (everything except these)
+diamonds %>% select( -carat, -price )
+diamonds %>% select( -c( carat, price ) )
+diamonds %>% select( -1, -7 )
+diamonds %>% select( -c( 1,7 ) )
+diamonds %>% select_( .dots = c('-carat', '-price' ) )
+diamonds %>% select( -one_of( 'carat', 'price' ) )
+#filter: specifying rows based on a logical expression
+diamonds %>% filter( cut == 'Ideal' )
+#compared to base R:
+diamonds[ diamonds$cut == 'Ideal', ]
+diamonds %>% filter( cut %in% c( 'Ideal', 'Good' ) )
+diamonds %>% filter( price >= 1000 )
+diamonds %>% filter( carat > 2, price < 14000 )
+diamonds %>% filter( carat > 2 & price < 14000 )
+diamonds %>% filter( carat < 1 | carat > 5 )
+diamonds %>% filter_( "cut == 'Ideal'" )
+diamonds %>% filter_( ~cut == 'Ideal' )
+theCut <- 'Ideal'
+diamonds %>% filter_( ~cut == theCut )
+theCol <- 'cut'
+diamonds %>% filter_( sprintf( "%s == '%s'", theCol, theCut))
+library( lazyeval )
+interp( ~ a == b, a=as.name( theCol ), b=theCut )
+diamonds %>% filter_(interp(~ a == b, a=as.name(theCol), b=theCut))
+library( rlang )
+diamonds %>% filter( UQE( as.name(theCol)) == theCut )
+#slice
+diamonds %>% slice( 1:5 )
+diamonds %>% slice( c( 1:5, 8, 15:20 ) )
+diamonds %>% slice( -(1:5) ) #negative rows are not returned
+#MUTATE: creating new columns or changing existing ones
+diamonds %>% select( carat,price ) %>% mutate( price/carat )
+diamonds %>% select( carat,price ) %>% mutate( Ratio=price/carat )
+diamonds %>%
+  select( carat, price ) %>%
+  mutate( Ratio=price/carat, Double=Ratio*2 )
+#COOL COOL COOL you will use this
+library( magrittr )
+diamonds2 <- diamonds
+diamonds2
+diamonds2 %<>%
+  select( carat, price ) %>%
+  mutate( Ratio=price/carat, Double=Ratio*2 )
+diamonds2
+#then play all you want!
+diamonds2 <- diamonds2 %>%
+  mutate( Quadruple=Double*2 )
+diamonds2
+#Summarize
+summarize( diamonds, mean( price ) )
+summarise( diamonds, mean( price ) )
+diamonds %>% summarize( mean( price ) )
+diamonds %>%
+  summarize( avgPrice= mean( price ),
+             medianrice= median( price ),
+             avgCarat= mean( carat ) )
+#Group_by. use group_by to first partition the data and then let summarize go to work
+diamonds %>%
+  group_by( cut ) %>%
+  summarize( AvgPrice=mean( price ) )
+diamonds %>%
+  group_by( cut ) %>%
+  summarize( AvgPrice=mean( price ), SunCarat = sum( carat ) )
+diamonds %>%
+  group_by( cut, color ) %>%
+  summarize( AvgPrice=mean( price ), SumCarat=sum( carat ) )
+diamonds %>%
+  group_by( cut ) %>%
+  summarize( AvgPrice=mean( price ), SumCarat=sum( carat ) ) %>%
+  arrange( desc( AvgPrice ) )
+#DO: any arbitrary function on the data
+#let's make an arbitrary fxn first:
+topN <- function( x, N=5 ){
+  x %>% arrange( desc( price ) ) %>% head( N )
+}
+#combine do with group_by
+diamonds %>%
+  group_by( cut ) %>%
+  do( topN(., N=3 ) )
+diamonds %>%
+  group_by( cut ) %>%
+  do( Top=topN(., 3) )
+topByCut <- diamonds %>% group_by(cut) %>% do(Top=topN(., 3))
+topByCut
+class( topByCut )
+class( topByCut$Top )
+#dplyr w/databases
+download.file("http://www.jaredlander.com/data/diamonds.db",
+              destfile='diamonds.db', mode='wb' )
+diaDBSource <- src_sqlite("data/diamonds.db")
+library( DBI )
+library( dbplyr )
+diaDBSource2 <- DBI::dbConnect(RSQLite::SQLite(), "diamonds.db")
+diaDBSource2
+diaTab <- tbl( diaDBSource2, 'diamonds' )
+diaTab
+diaTab %>%
+  group_by( cut ) %>%
+  dplyr::summarize( Price=mean( price ) )
+diaTab %>%
+  group_by( cut ) %>%
+  dplyr::summarize( Price=mean( price ), Carat=mean(Carat ) )
