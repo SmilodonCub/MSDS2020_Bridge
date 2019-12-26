@@ -117,6 +117,13 @@ place the original .csv in a github file and have R read from the link. This wil
 #will start by writing the data
 write.csv( Quarrels, file ='Quarrels.csv', row.names = FALSE)
 #Great! I see it in my directory, so now i'll beam it up to git.....
+#......
+#That worked, what a time to be alive.
+library(RCurl)
+myURL <- 'https://raw.githubusercontent.com/SmilodonCub/MSDS2020_Bridge/master/Quarrels.csv'
+gitQuarrels <- read.csv( url( myURL ) )
+head( gitQuarrels )
+#there is a god. & it's name is StackOverflow
 ```
 
 
