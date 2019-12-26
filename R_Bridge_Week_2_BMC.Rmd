@@ -11,13 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Bridge Course Week 2 Assignment
 
-One of the challenges in working with data s wrangling. In this assignment we will use R to perform this task.
+One of the challenges in working with data is wrangling. In this assignment we will use R to perform several tasks.
 Here is a list of data sets: <http://vincentarelbundock.github.io/Rdatasets/> 
 We will be selecting a set from this csv index list
 
 
 
-### Selecting a CSV, "Statistics of Deadly Quarrels
+### Selecting a CSV, "Statistics of Deadly Quarrels"
 ```{r}
 #Statistics of Deadly Quarrels, 'Quarrels' from the HistData package
 library( HistData )
@@ -36,7 +36,7 @@ Use the summary function to gain an overview of the data set. Then display the m
 summary( Quarrels )
 ```
 ```{r}
-#displaying the mean and median of at least 2 attributes
+#displaying the mean and median of 2 attributes
 
 deaths_descriptiveSTATS <- list( Mean = mean( Quarrels$deaths ),
                                  Median = median(Quarrels$deaths ) ) 
@@ -92,7 +92,7 @@ For at least 3 values in a column, please rename so that every value in that col
 
 ```{r}
 #reassigning the values in the 'Colonial' and 'Revolution' collumns to 2 and 3 respectively
-#but first, I will display the headers before any changes ordered such that the entries that will be changes are listed at the top.
+#but first, I will display the headers before any changes and order the dataframe such that the entries that will be changes are listed at the top.
 head( subQuarrels[ order( -subQuarrels$Colonial ), ] )
 head( subQuarrels[ order( -subQuarrels$Revolution ), ] )
 #now to change the values
