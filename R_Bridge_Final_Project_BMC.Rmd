@@ -1,0 +1,102 @@
+---
+title: "R Bridge Final Project"
+author: "Bonnie Cooper"
+date: "12/26/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Bridge Course Final Project
+
+This is the final project to show off what you have learned.
+Select your data set from the list below:
+<http://vincentarelbundock.github.io/Rdatasets/>
+
+The presentation approach is up to you, but it should contain the following:  
+1. Data Exploration: This should include summary statistics, means, medians, quartiles, or any
+other relevant information about the data set. Please include some conclusions in the R
+Markdown text.  
+2. Data wrangling: Please perform some basic transformations. They will need to make sense but
+could include column renaming, creating a subset of the data, replacing values, or creating new
+columns with derived data (for example – if it makes sense you could sum two columns
+together)  
+3. Graphics: Please make sure to display at least one scatter plot, box plot and histogram. Don’t
+be limited to this. Please explore the many other options in R packages such as ggplot2.  
+4. Meaningful question for analysis: Please state at the beginning a meaningful question for
+analysis. Use the first three steps and anything else that would be helpful to answer the
+question you are posing from the data set you chose. Please write a brief conclusion paragraph
+in R markdown at the end.  
+5. BONUS – place the original .csv in a github file and have R read from the link. This will be a very useful skill as you progress in your data science education and career
+
+
+
+```{r}
+#Von Bortkiewicz Horsekick Dataset, 'VonBort' from the vcd package
+library( vcd )
+head( VonBort )
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+head( VonBort )
+vbrows <- nrow( VonBort )
+vbcols <- ncol( VonBort )
+paste0("Num data entries in VonBort dataset: ", vbrows)
+paste0("Num features in VonBort dataset: ", vbcols)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+vonbortC <- VonBort
+agg_bycorps <- vonbortC %>%
+  group_by(corps) %>%
+  summarise(Total = sum(deaths),
+            Mean = mean(deaths))
+agg_bycorps <- agg_bycorps[order(agg_bycorps$Total, decreasing = TRUE),]  
+mostdeaths_corps <- agg_bycorps[1,]
+mostdeaths_corps[1,]
+```
+,.,.,
+vh,bjm
+```{r}
+agg_byyear <- vonbortC %>%
+  group_by(year) %>%
+  summarise(Total = sum(deaths),
+            Mean = mean(deaths))
+agg_byyear <- agg_byyear[order(agg_byyear$Total, decreasing = TRUE),]
+mostdeaths_year <- agg_byyear[ 1, ]
+mostdeaths_year
+```
+gjhkbh,n
+```{r}
+library(dplyr)
+#aggby_yearcorps <- vonbortC %>% group_by(year, corps) %>% summarise_each(funs(sum))
+aggby_yearcorps <- aggregate(cbind(deaths) ~ year + corps, data = vonbortC, sum, na.rm = TRUE)
+max_aggby_yearcorps <- aggregate(deaths ~ year, aggby_yearcorps, max)
+#max_aggby_yearcorps
+max_byyear <- merge(max_aggby_yearcorps, aggby_yearcorps)
+#max_byyear
+maxlist_byyear <- max_byyear %>% 
+         group_by(year, deaths) %>%
+         summarise(corps = toString(unique(corps)))
+maxlist_byyear
+```
+
+```{r}
+data("VonBort")
+## HorseKicks data
+xtabs(~ deaths, data = VonBort, subset = fisher == "yes")
+
+#Data from von Bortkiewicz (1898), given by Andrews \& Herzberg (1985), on number of deaths by horse or mule kicks in 10 (of 14 reported) corps of the Prussian army. 4 corps were not considered by Fisher (1925) as they had a different organization. This data set is a popular subset of the VonBort data.
+data("HorseKicks")
+gf <- goodfit(HorseKicks)
+summary(gf)
+plot(gf)
+```
+
