@@ -1,19 +1,34 @@
 ---
-title: "R Bridge Final Project"
+title: "A Prussian Poisson Process"
 author: "Bonnie Cooper"
-date: "12/26/2019"
+date: "1/12/2019"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+### Demonstrating a Poisson distribution with a classic data set: the von Bortkeiwicz Prussian horse-kicking data
 
+The Poisson process is a useful model applied to occurances where, while individual events occur randomly, thier regularity can be described by a consistent rate. In this R notebook, we shall discuss Poisson processes and give a thorough demonstration of the Poisson distribution using a classic data set, the von Bortkeisicz Prussian horse-kicking data. The commented R code bellow will give a step-by-step exploration and visualization of the data. Our goal will be to evaluate the goodness of fit of the Poisson distribution to the horse-kicking data.
+But first, a brief introduction to the Poisson process, Poisson distribution and the data.
+
+***
+
+### von Bortkiewicz & the Law of Small Numbers
+Bortkiewicz was born in Saint Petersburg, Imperial Russia, where he graduated from the Law Faculty in 1890.
+In 1898 he published a book about the Poisson distribution, titled The Law of Small Numbers.[1] In this book he first noted that events with low frequency in a large population follow a Poisson distribution even when the probabilities of the events varied. It was that book that made the Prussian horse-kicking data famous. The data gave the number of soldiers killed by being kicked by a horse each year in each of 14 cavalry corps over a 20-year period. Bortkiewicz showed that those numbers followed a Poisson distribution. The book also examined data on child-suicides. Some[2] have suggested that the Poisson distribution should have been named the "Bortkiewicz distribution."
+In 1898, Russian economist Ladislaus Bortkiewicz published his first statistics book entitled Das Gesetz der keinem Zahlen, in which he included an example that eventually became famous for illustrating the Poisson distribution.
+Bortkiewicz researched the annual deaths by horse kicks in the Prussian Army from 1875-1984. Data was recorded from 14 different army corps, with one being the Guard Corps. (According to one Wikipedia article on the subject, the Guard Corps may have been responsible for Prussia’s elite Guard units.) Let's take a closer look at his data and see what Minitab has to say using a Poisson goodness-of-fit test.
+
+### Poisson Process & the Poisson Distribution
+In probability theory and statistics, the Poisson distribution is a discrete probability distribution that expresses the probability of a number of events occurring in a fixed period of time if these events occur with a known average rate, and are independent of the time since the last event.
+As a review, the Poisson distribution is a discrete probability distribution for the counts of events that occur randomly in a given interval of time or space. The Poisson distribution only has one parameter, which is called lambda (or mean).
+ the classic Poisson situation: a rare event, whose average rate is small, with observations made over many small intervals of time.
+ 
+***
 ## R Bridge Course Final Project
 
-This is the final project to show off what you have learned.
-Select your data set from the list below:
-<http://vincentarelbundock.github.io/Rdatasets/>
 
 The presentation approach is up to you, but it should contain the following:  
 1. Data Exploration: This should include summary statistics, means, medians, quartiles, or any
@@ -29,31 +44,39 @@ be limited to this. Please explore the many other options in R packages such as 
 analysis. Use the first three steps and anything else that would be helpful to answer the
 question you are posing from the data set you chose. Please write a brief conclusion paragraph
 in R markdown at the end.  
-5. BONUS – place the original .csv in a github file and have R read from the link. This will be a very useful skill as you progress in your data science education and career
 
-
-
-```{r}
-#Von Bortkiewicz Horsekick Dataset, 'VonBort' from the vcd package
-library( vcd )
-head( VonBort )
+Set up the right environment by loading several relevant libraries
+```{r,warning=FALSE,message=FALSE}
+library(dplyr)
+library(magrittr)
+library(knitr)
+library(RCurl)
 ```
 
-## Including Plots
+For this demo, the VonBort dataset was selected from the [Visualizing Categorical Data](https://cran.r-project.org/web/packages/vcd/index.html) (vcd) library as listed on [Rdatasets](http://vincentarelbundock.github.io/Rdatasets/)
+For the convenience of this demo, the Von Bortkiewicz Horsekick Dataset, 'VonBort.csv' from the vcd package has been placed in a github file. This code will read the .csv from the link as a data.frame.
+```{r}
 
-You can also embed plots, for example:
+myURL <- 'https://raw.githubusercontent.com/SmilodonCub/MSDS2020_Bridge/master/VonBort.csv' 
+gitVonBort <- read.csv( url( myURL ) ) # read.csv is a built in function that will read the csv data as an R dataframe.
+#head( gitVonBort ) # head() will by default display the first 6 rows of the dataframe
+head( gitVonBort, 10 ) # the second argument customizes the number of lines made visible
+```
+
+## Data Exploration
+
+To start, let's get an idea of the basic size and complexity of the data set.
 
 ```{r pressure, echo=FALSE}
-head( VonBort )
-vbrows <- nrow( VonBort )
-vbcols <- ncol( VonBort )
+vbrows <- nrow( gitVonBort )
+vbcols <- ncol( gitVonBort )
 paste0("Num data entries in VonBort dataset: ", vbrows)
 paste0("Num features in VonBort dataset: ", vbcols)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 ```{r}
-vonbortC <- VonBort
+vonbortC <- gitVonBort
 agg_bycorps <- vonbortC %>%
   group_by(corps) %>%
   summarise(Total = sum(deaths),
@@ -89,14 +112,26 @@ maxlist_byyear
 ```
 
 ```{r}
-data("VonBort")
+#data("VonBort")
 ## HorseKicks data
-xtabs(~ deaths, data = VonBort, subset = fisher == "yes")
+xtabs(~ deaths, data = gitVonBort, subset = fisher == "yes")
 
 #Data from von Bortkiewicz (1898), given by Andrews \& Herzberg (1985), on number of deaths by horse or mule kicks in 10 (of 14 reported) corps of the Prussian army. 4 corps were not considered by Fisher (1925) as they had a different organization. This data set is a popular subset of the VonBort data.
-data("HorseKicks")
-gf <- goodfit(HorseKicks)
-summary(gf)
-plot(gf)
+#data("HorseKicks")
+#gf <- goodfit(HorseKicks)
+#summary(gf)
+#plot(gf)
 ```
 
+```{r}
+#will start by writing the data
+#write.csv( VonBort, file ='VonBort.csv', row.names = FALSE)
+#Great! I see it in my directory, so now i'll beam it up to git.....
+#......
+#That worked, what a time to be alive.
+
+```
+#### References
+The Poisson Distribution and Poisson Process Explained
+Will Koehrsen - https://towardsdatascience.com/the-poisson-distribution-and-poisson-process-explained-4e2cb17d459
+Quine, M. P., and E. Seneta. "Bortkiewicz's data and the law of small numbers." International Statistical Review/Revue Internationale de Statistique (1987): 173-181.
