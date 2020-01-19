@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Demonstrating a Poisson distribution with a classic data set: the von Bortkeiwicz Prussian horse-kicking data
 
 
-The Poisson process is a useful model applied to occurances where, while individual events occur randomly, thier regularity can be described by a consistent rate. In this R notebook, we will discuss Poisson processes and give a thorough demonstration of the Poisson distribution using a classic data set, the von Bortkeisicz Prussian horse-kicking data. The commented R code bellow will give a step-by-step exploration and visualization of the data. Our goal will be to evaluate the goodness of fit of the Poisson distribution to the horse-kicking data.
+&nbsp;&nbsp;&nbsp;&nbsp;The Poisson process is a useful model applied to occurances where, while individual events occur randomly, thier regularity can be described by a consistent rate. In this R notebook, we will discuss Poisson processes and give a thorough demonstration of the Poisson distribution using a classic data set, the von Bortkeisicz Prussian horse-kicking data. The commented R code bellow will give a step-by-step exploration and visualization of the data. Our goal will be to evaluate the goodness of fit of the Poisson distribution to the horse-kicking data.
 But first, a brief introduction to the data, Poisson processes, and the Poisson distribution.
 
 *** 
@@ -24,11 +24,13 @@ But first, a brief introduction to the data, Poisson processes, and the Poisson 
 
 ### von Bortkiewicz & the Law of Small Numbers
 
-Ladislaus Josephovich Bortkiewicz (9/1868 – 8/1931) was a Russian born man of Polish descent who established his career as an economist and statistician in Germany. In 1898, he published his first book, 'Das Gesetz der kleinen Zahlen', or, 'The Law of Small Numbers'. This Monograph introduces the Law of Small Numbers and in the process gave a detailed discussion of the Poisson distribution using real-world data sets such as the Prussian horse-kicking data. In short, the Law of Small Numbers states that when there are small numbers of events out of a comparatively many observations, that the observations trend towards a mean value. While the interpretation and even the name of the Law was met with criticism (Sheynin, 2008), the applied statistics to real world examples of Poisson processes has made for an enduring legacy for 'Das Gesetz der kleinen Zahlen'. In this Demo, we will be using the same Prussian horse-kicking data set used by von Bortkiewicz for our analysis as made available by the [Visualizing Categorical Data (vcd)](https://cran.r-project.org/web/packages/vcd/index.html) package for R.
+&nbsp;&nbsp;&nbsp;&nbsp;Ladislaus Josephovich Bortkiewicz (9/1868 – 8/1931) was a Russian born man of Polish descent who established his career as an economist and statistician in Germany. In 1898, he published his first book, 'Das Gesetz der kleinen Zahlen', or, 'The Law of Small Numbers'. This Monograph introduces the Law of Small Numbers and in the process gave a detailed discussion of the Poisson distribution using real-world data sets such as the Prussian horse-kicking data. In short, the Law of Small Numbers states that when there are small numbers of events out of a comparatively many observations, that the observations trend towards a mean value. While the interpretation and even the name of the Law was met with criticism (Sheynin, 2008), the applied statistics to real world examples of Poisson processes has made for an enduring legacy for 'Das Gesetz der kleinen Zahlen'. 
+In this Demo, we will be using the same Prussian horse-kicking data set used by von Bortkiewicz for our analysis as made available by the [Visualizing Categorical Data (vcd)](https://cran.r-project.org/web/packages/vcd/index.html) package for R.
 
 
 ### Poisson Process & the Poisson Distribution (a cursory overview)
-The Bortkiewicz horse-kicking data was collected over a 20 year period (1875-1984) from 14 different calvalry corps. It gives number of soldiers that died by horse kick for each division. The horse-kicking data exemplifies a classic Poisson process: observations of rare and independent events distributed over many observation intervals with a resultant low average rate of occurance. While the Poisson process had previously been described, von Bortkiewicz was the first to depict the Poisson distribution with his data. The Poisson distribution is a plot of the proportion or probability of events as a function of the number of events for a given time interval. the Poisson distribution has only one parameter, the mean, and it makes the assumption that the events are random and discrete. That is to say, that the occurance of one event is not predicated or otherwise effected by the previous event(s). The von Bortkiewicz data satifies the assumptons of a Poisson process, because death by horse-kicking is a rare and random event and a horse-kicking event in one corps is not reliant on the next occurance in that or any other corps. The Poisson distribution of the horse-kicking data describes the probability of the number of horse-kicking deaths for given corps for a year. 
+&nbsp;&nbsp;&nbsp;&nbsp;The Bortkiewicz horse-kicking data was collected over a 20 year period (1875-1984) from 14 different calvalry corps. It gives the number of soldiers that died by horse kick for each division. The horse-kicking data exemplifies a classic Poisson process: observations of rare and independent events distributed over many observation intervals with a resultant low average rate of occurance. While the Poisson process had previously been described, von Bortkiewicz was the first to depict the Poisson distribution with his data. 
+&nbsp;&nbsp;&nbsp;&nbsp;The Poisson distribution is a plot of the proportion or probability of events as a function of the number of events for a given time interval. the Poisson distribution has only one parameter, the mean, and it makes the assumption that the events are random and discrete. That is to say, that the occurance of one event is not predicated or otherwise effected by the previous event(s). The von Bortkiewicz data satifies the assumptons of a Poisson process, because death by horse-kicking is a rare and random event and a horse-kicking event in one corps is not reliant on the previous occurance in that or any other corps. The Poisson distribution of the horse-kicking data describes the probability of the number of horse-kicking deaths for given corps for a year. 
 
 The following R notebook will introduce us to the von Bortkiewicz data set and build the Poisson distribution.
 
@@ -41,17 +43,17 @@ The following R notebook will introduce us to the von Bortkiewicz data set and b
 ***
 ### Horse-kicking Data Exploration
 
-
-Set up the right environment by loading several relevant libraries
+&nbsp;&nbsp;&nbsp;&nbsp;We will begin by loading several R libraries to our environment. The horse-kicking data set we will be using is listed on [Rdatasets](http://vincentarelbundock.github.io/Rdatasets/) from the [Visualizing Categorical Data](https://cran.r-project.org/web/packages/vcd/index.html) (vcd) library. However, note that we do not load this specific library. That is because the data has been previously hosted on the author's git account and we will be accessing it via url link. 
 ```{r,warning=FALSE,message=FALSE}
 library(dplyr)
 library(magrittr)
 library(knitr)
-library(RCurl)
+library(ggplot2)
+library(ggpubr)
+library(ggreprel)
 ```
 
-For this demo, the VonBort dataset was selected from the [Visualizing Categorical Data](https://cran.r-project.org/web/packages/vcd/index.html) (vcd) library as listed on [Rdatasets](http://vincentarelbundock.github.io/Rdatasets/)
-For the convenience of this demo, the Von Bortkiewicz Horsekick Dataset, 'VonBort.csv' from the vcd package has been placed in a github file. This code will read the .csv from the link as a data.frame.
+&nbsp;&nbsp;&nbsp;&nbsp;For the convenience of this demo, the Von Bortkiewicz Horsekick Dataset, 'VonBort.csv' from the vcd package has been placed in a github file. This code will read the .csv from the link as a data.frame.
 ```{r}
 
 myURL <- 'https://raw.githubusercontent.com/SmilodonCub/MSDS2020_Bridge/master/VonBort.csv' 
@@ -60,20 +62,115 @@ gitVonBort <- read.csv( url( myURL ) ) # read.csv is a built in function that wi
 head( gitVonBort, 4 ) # the second argument customizes the number of lines made visible
 ```
 
-## Data Exploration
+&nbsp;&nbsp;&nbsp;&nbsp;Passing our dataframe to head() displayed the first several rows of data. Feel free to change the second argument to see more of less of the data.
 
-To start, let's get an idea of the basic size and complexity of the data set.
+&nbsp;&nbsp;&nbsp;&nbsp;Now, let's get an idea of the overall size of the data set.
 
-```{r pressure, echo=FALSE}
-vbrows <- nrow( gitVonBort )
-vbcols <- ncol( gitVonBort )
-paste0("Num data entries in VonBort dataset: ", vbrows)
-paste0("Num features in VonBort dataset: ", vbcols)
+```{r}
+vbrows <- nrow( gitVonBort ) # return the number of rows in our dataframe
+vbcols <- ncol( gitVonBort ) # return the number of columns in our dataframe
+paste0("Num data entries in VonBort dataset: ", vbrows) # format our output
+paste0("Num features in VonBort dataset: ", vbcols) # " "
+```
+&nbsp;&nbsp;&nbsp;&nbsp;From the output of the R code chunk above, we can see that our dataset has 280 rows. Each one of these row gives data for a horse-kicking reporting (i.e. the number of deaths for a given corps that occurred in a given year).The data set also has 4 collumns, or features of data. The first three of these are very straightforward:
+
+1. deaths: number (int) of deaths in a year 
+2. year: year of the data entry given as a number (int) 
+3. corps: a factor indicating which corps the data entry corresponds to.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;The forth feature, 'fisher', is less intuitive; it is a factor that indicates whether the corps was included in the analysis performed by R.A. Fisher in 1925. Borkiewicz qualitatively established the Poisson distribution to his data, however Fisher was the first to quantitatively demonstrate the goodness of fit of the Poisson probability model to the horse-kicking via the chi-squared test. (Merikoski 2017). The data that was excluded from the analysis was considered to be from heterogeneous corps. For instance, corps 'G' was an elite calvalry corps.
+
+&nbsp;&nbsp;&nbsp;&nbsp;For this analysis, we will use the same subset of the horse-kicking data that Fisher used. That is to say, that will be using the data entries where 'fisher' = 'yes'
+
+&nbsp;&nbsp;&nbsp;&nbsp;But first, let's learn more about each feature of the data from the summary() function
+```{r}
+summary( gitVonBort ) # summary() returs result summaries of various functions
+```
+&nbsp;&nbsp;&nbsp;&nbsp;From summary() we learn quite a bit about each feature:
+
+  * deaths: we learn that the range of deaths per year is 0/yr to 4/yr with a mean rate of 0.7/yr. This is exactly what we expect from a Poisson process: a relatively rare event that can be described by a mean.  
+  * year: data collection ranged 20 years: 1875-1894
+  * corps: as expected, each corps has 20 data entries (one for each year)
+  * fisher: of the 280 data entries, only 200 were used by Fisher for his analysis. We will be following his lead.
+  
+  
+&nbsp;&nbsp;&nbsp;&nbsp;If we want to perform the same analysis as RA Fisher and replicate his goodness of fit, we will have to create a new dataframe that holds a subset of the horse-kicking data for which 'fisher'='yes'
+```{r}
+fisherYESVonBort <- gitVonBort[ gitVonBort$fisher == 'yes',]
+head( fisherYESVonBort, 10 )
+```
+```{r}
+#let's try some sanity checks to make sure that worked as intended
+nrfVB <- nrow( fisherYESVonBort ) # what are the number of rows in our subset?
+numNOfVB <- length( which( fisherYESVonBort$fisher == 'no', arr.ind=TRUE ) ) # are there any 'no' values in the 'fisher' column of our subset?
+numyesfVB <- length( which( fisherYESVonBort$fisher == 'yes', arr.ind=TRUE) ) # conversely, how many 'yes' values are there in the 'fisher' column of our subset? We should see 200.
+yesBool <- numyesfVB == length( which( gitVonBort$fisher == 'yes', arr.ind = TRUE ) ) # final check sanity check: does the number of 'yes' in our subset equal the number of 'yes' in the original data set for the column 'fisher' 
+paste0("Num data entries in fisherYESVonBort subset: ", nrfVB ) # print nrfVB. We are expecting 200, because in our summary( gitVonBort ) result we saw that there were 200 rows where 'fisher'='yes'
+paste0("Num 'fisher'=='no' in fisherYESVonBort subset: ", numNOfVB )
+paste0("Num 'fisher'=='yes' in fisherYESVonBort subset: ", numyesfVB )
+paste0("It is ", yesBool, " that our fisherYESVonBort subset has the same number of 'fisher'=='yes' as our original dataset" )
+```
+&nbsp;&nbsp;&nbsp;&nbsp;Great, from our sanity checks on the fisherYESVonBort data subset we can move forward feeling confident that we correctly selected the data we are interested in.  
+&nbsp;&nbsp;&nbsp;&nbsp;It might seem like a waste of time do perform these checks. Afterall, this is such a small and simple dataset. However, it is a good excersize, not all data is as clean and neat as this, and performing sanity checks this early in analysis can help avoid some serious frustration when looking at final results.
+
+&nbsp;&nbsp;&nbsp;&nbsp;Now, lets look at the summary() of our subset, fisherYESVonBort....
+```{r}
+summary( fisherYESVonBort )
+```
+&nbsp;&nbsp;&nbsp;&nbsp;The summary( fisherYESVonBort ) result shows us that there are 200 'yes' and 0 'no' values for 'fisher', so, depending on your needs for the data in downstream analysis, our previous sanity checks might have been overkill. ¯|_(ツ)_/¯ 
+
+What else do we see....
+&nbsp;&nbsp;&nbsp;&nbsp;Interesting!, the 'deaths' Mean of fisherVonBort subset is different from the original dataset. Lets visualize this information from both datasets and evaluate whether the difference is statistically significant. Let's also evaluate the subset of data where 'fisher'='no'
+```{r}
+fisherNOVonBort <- gitVonBort[ gitVonBort$fisher == 'no',] #create a dataframe that holds the records of horse-kicking data where 'fisher'='no'
+summary( fisherNOVonBort )
+```
+&nbsp;&nbsp;&nbsp;&nbsp;The mean of 'deaths' for fisherNOVonBort, the subset of the data that Fisher did not report on, is higher than the means for the other two data sets. Let's visualize this and evaluate the statistical significance of differences between the means of these three groups
+
+```{r}
+#prepare the data we want to visualize
+raw_VonBort <- data.frame(data_subset = "All Data", num_deaths = gitVonBort$deaths)
+yesFisher_VonBort <- data.frame(data_subset = "fisher=Yes", num_deaths = fisherYESVonBort$deaths)
+noFisher_VonBort <- data.frame(data_subset = "fisher=No", num_deaths = fisherNOVonBort$deaths)
+# Combine into one long data frame to facilitate plotting with ggplot
+plot.data <- rbind( raw_VonBort, yesFisher_VonBort, noFisher_VonBort )
+#plotting variables/labels we'll use
+dwidth <- 0.9 #add some jitter to the data points so that points with the same y value can be differentiated
+pval_comparisons <- list( c("All Data", "fisher=Yes"), 
+                          c("fisher=Yes", "fisher=No"), 
+                          c("All Data", "fisher=No") ) #a list of the comparisons we will make for statistical significance
+#plot the data
+ggplot(plot.data, aes(x=data_subset, y=num_deaths, color=data_subset, fill=data_subset)) +
+  geom_point(position=position_jitterdodge(dodge.width=dwidth)) +
+  geom_boxplot(fill="white", position = position_dodge(width=dwidth)) + 
+  stat_summary(fun.y = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..),
+                 width = .75, linetype = "dashed") +
+  stat_compare_means(comparisons = pval_comparisons, label = "p.signif") + 
+  ggtitle("Annual Deaths for Horse-kicking Data by Subset") +
+  xlab("Horse-kicking Data Subset") + 
+  ylab("Deaths per Year")
+```
+In the figure above we see boxplots for the original dataset (red), the fisherYESVonBort subset (green) and the fisherNOVonBort subset (blue). For each data set the mean is given by a dashed line. Above the plots, are the results of multiple pairwise comparison tests for significance difference of the means. No significant difference (ns) was found for both fisherYESVonBort & fisherNOVonBort when compared to the original data set (gitVonBort). However, the means of fisherYESVonBort & fisherNOVonBort were found to be significantly different.
+
+We can show the summary of the comparison which includes the corresponding p-values
+```{r}
+compare_means( num_deaths ~ data_subset,  data = plot.data)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+We observed a statistically significant difference in the means between the two subsets of our data and this raises an interesting question: Do the differences between the two subsets of data ('fisher'='yes'/'no') lead to differences in the 'goodness of fit' of a Poison distribution to the data?
+
+### Horse-kicking Data Wrangling
+Before we move on to fitting a Poisson distribution to our horse-kicking data, let us examine our evaluate our subsets further to learn more about the nature of the data.
+We know from our result of summary( fisherYESVonBort ) that the average annual deaths per year is 0.61. However let's answer a few more questions:
+
+  1. Which corps had the most deaths over the 20 year period?
+  2. Which year out of the 20 year recording perios had the most deaths?
+  3. Which corps had the most deaths over the 20 year period for each year?
+
+
 ```{r}
-vonbortC <- gitVonBort
+#1. Which corps had the most deaths over the 20 year period?
+vonbortC <- fisherYESVonBort
 agg_bycorps <- vonbortC %>%
   group_by(corps) %>%
   summarise(Total = sum(deaths),
@@ -82,9 +179,25 @@ agg_bycorps <- agg_bycorps[order(agg_bycorps$Total, decreasing = TRUE),]
 mostdeaths_corps <- agg_bycorps[1,]
 mostdeaths_corps[1,]
 ```
-,.,.,
-vh,bjm
+Corps XIV had the most deaths, with a total of 24 over the 20 year collections period. This resulted in a mean of 1.2 deaths/year, which is approximately twice the average annual death rate for the 'fisher'='yes' dataset.
+
+Let's visualize the data aggregation as a bar plot to see how the other corps compare
 ```{r}
+# Barplot
+ggplot(agg_bycorps, aes(x=corps, y=Total)) + 
+  geom_bar(stat = "identity",color="green", fill=rgb(0.2,0.9,0.2,0.4)) +
+  geom_hline(yintercept=mean(agg_bycorps$Total), linetype="dashed", color = "green") +
+  annotate("text", x = 1, y = mean(agg_bycorps$Total)+1, label = "Mean", color = "green", size = 6) +
+  ggtitle("Total Deaths per Corps") +
+  xlab("corps") + 
+  ylab("Total Deaths")
+
+```
+
+
+
+```{r}
+#2. Which year out of the 20 year recording period had the most deaths?
 agg_byyear <- vonbortC %>%
   group_by(year) %>%
   summarise(Total = sum(deaths),
@@ -93,9 +206,43 @@ agg_byyear <- agg_byyear[order(agg_byyear$Total, decreasing = TRUE),]
 mostdeaths_year <- agg_byyear[ 1, ]
 mostdeaths_year
 ```
-gjhkbh,n
+The year 1890 had the most deaths, with a total of 12. The mean of death rate was 1.2 deaths/year across corps. This is approximately twice the average annual death rate for the 'fisher'='yes' dataset.
+
+Let's visualize the data aggregation as a bar plot to see how the year compare across the duration of data collection
 ```{r}
-library(dplyr)
+# Barplot
+ggplot(agg_byyear, aes(x=year, y=Total)) + 
+  geom_bar(stat = "identity",color="green", fill=rgb(0.2,0.9,0.2,0.4)) +
+  geom_hline(yintercept=mean(agg_byyear$Total), linetype="dashed", color = "green") +
+  annotate("text", x = 1876, y = mean(agg_byyear$Total)+1, label = "Mean", color = "green", size = 6) +
+  ggtitle("Total Deaths per Year") +
+  xlab("year") + 
+  ylab("Total Deaths") +
+  xlim(c(min(agg_byyear$year), max(agg_byyear$year)))
+
+```
+Let's now perform the same data manipulation of the fisherNOVonBort subset and visualize the results
+
+```{r}
+vonbortC <- fisherNOVonBort
+agg_bycorps <- vonbortC %>%
+  group_by(corps) %>%
+  summarise(Total = sum(deaths),
+            Mean = mean(deaths))
+agg_byyear <- vonbortC %>%
+  group_by(year) %>%
+  summarise(Total = sum(deaths),
+            Mean = mean(deaths))
+
+
+```
+
+
+
+Now let us look at which corps had the most deaths per year for both of the data subsets
+```{r}
+#3. Which corps had the most deaths over the 20 year period for each year?
+  
 #aggby_yearcorps <- vonbortC %>% group_by(year, corps) %>% summarise_each(funs(sum))
 aggby_yearcorps <- aggregate(cbind(deaths) ~ year + corps, data = vonbortC, sum, na.rm = TRUE)
 max_aggby_yearcorps <- aggregate(deaths ~ year, aggby_yearcorps, max)
@@ -105,7 +252,18 @@ max_byyear <- merge(max_aggby_yearcorps, aggby_yearcorps)
 maxlist_byyear <- max_byyear %>% 
          group_by(year, deaths) %>%
          summarise(corps = toString(unique(corps)))
-maxlist_byyear
+maxlist_byyear[1:20,]
+```
+We can scroll through the result above and/or index a year of interest, but perhaps we can visualize the data to make the gist of it more immediately apparent....
+```{r}
+
+#+ geom_label_repel(aes(label = rownames(df),fill = factor(cyl)), color = 'white',size = 3.5)
+```
+
+
+```{r}
+summary( fisherYESVonBort$deaths )
+mean(fisherYESVonBort$deaths)
 ```
 
 ```{r}
@@ -137,16 +295,10 @@ The Poisson Distribution and Poisson Process Explained
 Will Koehrsen - https://towardsdatascience.com/the-poisson-distribution-and-poisson-process-explained-4e2cb17d459
 Quine, M. P., and E. Seneta. "Bortkiewicz's data and the law of small numbers." International Statistical Review/Revue Internationale de Statistique (1987): 173-181.
 Sheynin, Oscar. "Bortkiewicz’Alleged Discovery: the Law of Small Numbers." Historiasci-entiarum, Second series: International Journal of the History of Science Society of Japan 18.1 (2008): 36-48.
-
-
-
-## R Bridge Course Final Project
+Merikoski, Jorma K. "A Panorama of Statistics: Perspectives, Puzzles and Paradoxes in Statistics Eric Sowey and Peter Petocz John Wiley & Sons, 2017, xii+ 313 pages, softcover ISBN: 978-1-119-07582-0." International Statistical Review 85.2 (2017): 375-376.
 
 
 The presentation approach is up to you, but it should contain the following:  
-1. Data Exploration: This should include summary statistics, means, medians, quartiles, or any
-other relevant information about the data set. Please include some conclusions in the R
-Markdown text.  
 2. Data wrangling: Please perform some basic transformations. They will need to make sense but
 could include column renaming, creating a subset of the data, replacing values, or creating new
 columns with derived data (for example – if it makes sense you could sum two columns
